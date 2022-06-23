@@ -1,1 +1,3 @@
-/home/chief/programs/gavant/SudokuSolver/sudokusolver/src/main/java/com/gavant/sudokusolver/App.java
+/home/chief/programs/java/SudokuSolver_guava/src/main/java/com/gavant/sudokusolver/Main.java
+/home/chief/programs/java/SudokuSolver_guava/src/main/java/com/gavant/sudokusolver/Sudoku.java
+/home/chief/programs/java/SudokuSolver_guava/src/main/java/com/gavant/sudokusolver/InvalidPuzzleException.java

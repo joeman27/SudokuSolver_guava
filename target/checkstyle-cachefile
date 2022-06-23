@@ -1,5 +1,4 @@
-#Wed Jun 22 00:30:44 EDT 2022
-configuration*?=94157D48234F11AAF68BD1BA969B31E08F22396B
-/home/chief/programs/gavant/SudokuSolver/sudokusolver/src/test/java/com/gavant/sudokusolver/AppTest.java=1655858973875
-/home/chief/programs/gavant/SudokuSolver/sudokusolver/src/main/java/com/gavant/sudokusolver/App.java=1655858973875
-module-resource*?\:checkstyle/suppressions.xml=7C338034722D61DFA4F7DB13CCD86BE0540275EA
+#Thu Jun 23 12:50:09 EDT 2022
+configuration*?=B05C30D87FB2E46AF0CEA30919FBBE474BE3DC38
+module-resource*?\:checkstyle-xpath-suppressions.xml=109CB5283F5752643E5C46F8F3BC57AD5A591A88
+module-resource*?\:checkstyle-suppressions.xml=C395FE46E692E704E50B77671CF7BE0448046557
