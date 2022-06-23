@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Sudoku.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sudokusolver</a> &gt; <a href="index.source.html" class="el_package">com.gavant.sudokusolver</a> &gt; <span class="el_source">Sudoku.java</span></div><h1>Sudoku.java</h1><pre class="source lang-java linenums">package com.gavant.sudokusolver;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
+
+/**
+ * 
+ */
+public class Sudoku {
+<span class="nc" id="L20">    private MutableGraph puzzle = GraphBuilder.undirected().allowsSelfLoops(false).build();</span>
+
+<span class="nc" id="L22">    private static Logger logger = LoggerFactory.getLogger(Sudoku.class.getName());</span>
+
+    /**
+     * 
+     * @param path
+     */
+<span class="nc" id="L28">    public Sudoku(Path path) {</span>
+<span class="nc" id="L29">        readPuzzle(path);</span>
+<span class="nc" id="L30">    }</span>
+
+    /**
+     * 
+     * @param fileName
+     */
+<span class="nc" id="L36">    public void produceFile(String fileName) {}</span>
+
+    /**
+     * 
+     * @param path
+     */
+    private void readPuzzle(Path path) {
+<span class="nc" id="L43">        logger.debug(&quot;Entering readPuzzle&quot;);</span>
+        try{
+<span class="nc" id="L45">            BufferedReader f = Files.newBufferedReader(path);</span>
+
+            // Intermediary storage between puzzle as a file and as a graph
+<span class="nc" id="L48">            int[][] grid = new int[9][9];</span>
+<span class="nc" id="L49">            int rowNum = 0;</span>
+            String line;
+
+            // Convert file to two dimensional array
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            while ((line = f.readLine()) != null) {</span>
+<span class="nc" id="L54">                line = line.strip();</span>
+<span class="nc" id="L55">                verifyPuzzle(rowNum, line);</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">                for (int colNum = 0; colNum &lt; line.length(); colNum++) {</span>
+<span class="nc" id="L57">                    grid[rowNum][colNum] = line.charAt(colNum);</span>
+                }
+<span class="nc" id="L59">                rowNum++;</span>
+            }
+
+<span class="nc" id="L62">            buildGraph(grid);</span>
+<span class="nc" id="L63">            f.close();</span>
+        }
+<span class="nc" id="L65">        catch (IOException e) {</span>
+<span class="nc" id="L66">            logger.error(e.getMessage());</span>
+<span class="nc" id="L67">            logger.debug(e.getStackTrace().toString());</span>
+        }
+<span class="nc" id="L69">        catch (InvalidPuzzleException e) {</span>
+<span class="nc" id="L70">            logger.error(e.getMessage());</span>
+<span class="nc" id="L71">            logger.debug(e.getStackTrace().toString());</span>
+<span class="nc" id="L72">            System.exit(1);</span>
+        }
+        finally {
+<span class="nc" id="L75">            logger.debug(&quot;Leaving readPuzzle&quot;);</span>
+        }
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * 
+     * @param rowNum
+     * @param line
+     * @throws InvalidPuzzleException
+     */
+    private void verifyPuzzle(int rowNum, String line) throws InvalidPuzzleException{
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (rowNum &gt;= 9) {</span>
+<span class="nc" id="L87">            throw new InvalidPuzzleException(&quot;Invalid column length: &quot; + rowNum);</span>
+        }
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (line.length() != 9) {</span>
+<span class="nc" id="L91">            throw new InvalidPuzzleException(&quot;Invalid row length: &quot; + line.length());</span>
+        }
+
+<span class="nc" id="L94">        Pattern p = Pattern.compile(&quot;^[xX\\d]{9}$&quot;);</span>
+<span class="nc" id="L95">        Matcher m = p.matcher(line);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (!m.matches()) {</span>
+<span class="nc" id="L97">            throw new InvalidPuzzleException(&quot;Line contains invalid characters: &quot; + line);</span>
+        }
+
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * 
+     */
+    private void buildGraph(int[][] grid) {
+
+<span class="nc" id="L107">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

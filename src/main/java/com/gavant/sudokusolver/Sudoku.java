@@ -46,6 +46,7 @@ public class Sudoku {
 
             // Intermediary storage between puzzle as a file and as a graph
             int[][] grid = new int[9][9];
+
             int rowNum = 0;
             String line;
 
@@ -59,18 +60,18 @@ public class Sudoku {
                 rowNum++;
             }
 
-            buildGraph(grid);
             f.close();
+            buildGraph(grid);
         }
         catch (IOException e) {
             logger.error(e.getMessage());
             logger.debug(e.getStackTrace().toString());
         }
-        catch (InvalidPuzzleException e) {
-            logger.error(e.getMessage());
-            logger.debug(e.getStackTrace().toString());
-            System.exit(1);
-        }
+        // catch (InvalidPuzzleException e) {
+        //     logger.error(e.getMessage());
+        //     logger.debug(e.getStackTrace().toString());
+        //     System.exit(1);
+        // }
         finally {
             logger.debug("Leaving readPuzzle");
         }
@@ -82,7 +83,7 @@ public class Sudoku {
      * @param line
      * @throws InvalidPuzzleException
      */
-    private void verifyPuzzle(int rowNum, String line) throws InvalidPuzzleException{
+    private void verifyPuzzle(int rowNum, String line) throws InvalidPuzzleException {
         if (rowNum >= 9) {
             throw new InvalidPuzzleException("Invalid column length: " + rowNum);
         }
@@ -103,7 +104,27 @@ public class Sudoku {
      * 
      */
     private void buildGraph(int[][] grid) {
+        // Iterate through 3x3 blocks of the puzzle.
+        // upperBound/leftBound define the upper/left sides of the block,
+        //  lower/right sides are calculated as +3
+        for (int upperBound = 0; upperBound < grid.length; upperBound+=3) {
+            for (int leftBound = 0; leftBound < grid[0].length; leftBound+=3) {
 
+                // Iterate through elements of the 3x3 block...
+                for (int row = upperBound; row < upperBound + 3; row++) {
+                    for (int col = leftBound; col < leftBound + 3; col++) {
+
+                        // ...and connect to every other element of the block.
+                        for (int otherRow = upperBound; otherRow < upperBound + 3; otherRow++) {
+                            for (int otherCol = leftBound; otherCol < leftBound + 3; otherCol++) {
+                                puzzle.
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
     }
 
 }

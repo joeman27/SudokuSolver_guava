@@ -5,7 +5,7 @@ package com.gavant.sudokusolver;
  *  expected dimensions or contains invalid characters.
  */
 
-public class InvalidPuzzleException extends Exception {
+public class InvalidPuzzleException extends RuntimeException {
     public InvalidPuzzleException() {
         super();
     }
