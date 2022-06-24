@@ -61,6 +61,11 @@ public final class Node {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getId(), this.getValue());
+        return Objects.hash(this.getId());
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.getValue());
     }
 }

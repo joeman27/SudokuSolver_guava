@@ -1,4 +1,0 @@
-GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-sudokusolver,com.gavant.sudokusolver,Sudoku,147,0,10,0,37,0,11,0,6,0
-sudokusolver,com.gavant.sudokusolver,Main,43,0,2,0,6,0,3,0,2,0
-sudokusolver,com.gavant.sudokusolver,InvalidPuzzleException,7,0,0,0,4,0,2,0,2,0
