@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 public final class Main {
     /**
      * Entry point for SudokuSolver.
+     * 
      * @param args The arguments of the program.
      */
     public static void main(String[] args) {

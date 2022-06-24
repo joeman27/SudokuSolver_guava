@@ -13,37 +13,46 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.graph.ImmutableGraph;
 
-/**
- * Unit tests for Sudoku class.
- */
 class SudokuTest {
 
     @Test
-    void testFileInput() {
+    void testInvalidFileInputs() {
+        assertThrows(InvalidPuzzleException.class, () -> {
+            Path path = Paths.get("src/test/resources/TestPuzzleEmpty.txt");
+            new Sudoku().readFile(path);
+        },
+                "Expected error on empty puzzle");
+
         assertThrows(InvalidPuzzleException.class, () -> {
             Path path = Paths.get("src/test/resources/TestPuzzleMissingRow.txt");
-            new Sudoku().readFile(path);}, 
-            "Expected error on short puzzle");
+            new Sudoku().readFile(path);
+        },
+                "Expected error on short puzzle");
 
         assertThrows(InvalidPuzzleException.class, () -> {
             Path path = Paths.get("src/test/resources/TestPuzzleExtraRow.txt");
-            new Sudoku().readFile(path);}, 
-            "Expected error on extra tall puzzle");
-        
+            new Sudoku().readFile(path);
+        },
+                "Expected error on extra tall puzzle");
+
         assertThrows(InvalidPuzzleException.class, () -> {
             Path path = Paths.get("src/test/resources/TestPuzzleLongRow.txt");
-            new Sudoku().readFile(path);}, 
-            "Expected error on extra wide puzzle");
-    
+            new Sudoku().readFile(path);
+        },
+                "Expected error on extra wide puzzle");
+
         assertThrows(InvalidPuzzleException.class, () -> {
             Path path = Paths.get("src/test/resources/TestPuzzleShortRow.txt");
-            new Sudoku().readFile(path);}, 
-            "Expected error on narrow puzzle");
-                
+            new Sudoku().readFile(path);
+        },
+                "Expected error on narrow puzzle");
+
         assertThrows(InvalidPuzzleException.class, () -> {
             Path path = Paths.get("src/test/resources/TestPuzzleInvalidCharacter.txt");
-            new Sudoku().readFile(path);}, 
-            "Expected error on puzzle with invalid character");
+            new Sudoku().readFile(path);
+        },
+                "Expected error on puzzle with invalid character");
+
     }
 
     @Test
@@ -55,7 +64,7 @@ class SudokuTest {
 
         for (Node node : graph.nodes()) {
             assertEquals(20, graph.degree(node),
-                "Expected 20 connections per node");
+                    "Expected 20 connections per node");
         }
     }
 
@@ -67,9 +76,18 @@ class SudokuTest {
         sudoku.solve();
         ImmutableGraph<Node> graph = sudoku.getGraph();
 
+        // Confirm there are no unsolved Nodes
         for (Node node : graph.nodes()) {
             assertNotEquals(0, node.getValue());
         }
+
+        assertThrows(InvalidPuzzleException.class, () -> {
+            Path p = Paths.get("src/test/resources/TestPuzzleNoSolution.txt");
+            Sudoku s = new Sudoku();
+            s.readFile(p);
+            s.solve();
+        },
+                "Expected error on puzzle with no solution");
     }
 
     @Test
