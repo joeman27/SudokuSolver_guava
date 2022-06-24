@@ -22,26 +22,35 @@ import com.google.common.graph.MutableGraph;
  */
 public class Sudoku {
     private MutableGraph<Node> puzzle;
-    Map<Integer, Node> nodes;
+    private Map<Integer, Node> nodes;
+    private Path inputPath;
 
     private static Logger logger = LoggerFactory.getLogger(Sudoku.class.getName());
 
     /**
-     * 
+     * Initializes MutableGraph representing state of the puzzle. Values must be
+     * populated via readFile().
      */
     public Sudoku() {
         puzzle = GraphBuilder.undirected().allowsSelfLoops(false).build();
     }
 
+    /**
+     * @return immutable copy of MutableGraph representing current state of the
+     *         puzzle
+     */
     public ImmutableGraph<Node> getGraph() {
         return ImmutableGraph.copyOf(puzzle);
     }
 
     /**
+     * Produces file containing formatted contents of 9x9 sudoku grid.
      * 
-     * @param fileName
+     * @param path path (including file name) where the output file should be
+     *             created
      */
     public void produceFile(Path path) {
+        logger.debug("Entering produceFile");
         try {
             BufferedWriter f = Files.newBufferedWriter(path);
 
@@ -65,21 +74,24 @@ public class Sudoku {
             logger.error(e.getMessage());
             logger.debug(e.getStackTrace().toString());
         } finally {
-
+            logger.debug("Leaving produceFile");
         }
 
     }
 
     /**
      * Reads Sudoku input file, converting it to a char array to be passed to
-     * buildGraph()
+     * buildGraph().
      * 
      * @param path Relative path to Sudoku input file.
+     * @throws InvalidPuzzleException if input puzzle does not fit Sudoku dimensions
      */
     public void readFile(Path path) {
         logger.debug("Entering readFile");
+        this.inputPath = path;
+
         try {
-            BufferedReader f = Files.newBufferedReader(path);
+            BufferedReader f = Files.newBufferedReader(inputPath);
 
             // Intermediary storage between puzzle as a file and as a graph
             char[][] grid = new char[9][9];
@@ -103,37 +115,36 @@ public class Sudoku {
 
             f.close();
             buildGraph(grid);
-        } 
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage());
             logger.debug(e.getStackTrace().toString());
-        }
-        catch (Exception e) {
-            throw e;
-        }
-        // catch (InvalidPuzzleException e) {
-        // logger.error(e.getMessage());
-        // logger.debug(e.getStackTrace().toString());
-        // System.exit(1);
-        // }
-        finally {
+        } finally {
             logger.debug("Leaving readFile");
         }
     }
 
     /**
+     * Solves puzzle in place using a graph coloring strategy.
      * 
+     * @throws InvalidPuzzleException if algorithm fails to find a solution
      */
     public void solve() {
         // Find first blank Node
         if (solveHelper(nextBlankNode(0))) {
-            System.out.println("Solution found");
+            logger.info("Solution found");
         } else {
             throw new InvalidPuzzleException("Puzzle not solveable");
         }
     }
 
+    /**
+     * Handles recursive calls for solve().
+     * 
+     * @param id id of Node contained within puzzle graph from which to recurse
+     * @return true if a solution is found, false otherwise
+     */
     private boolean solveHelper(int id) {
+        // Return true if we've reached the last Node (cell) of the puzzle
         if (id >= nodes.size()) {
             return true;
         }
@@ -141,16 +152,22 @@ public class Sudoku {
             Node node = nodes.get(id);
             node.setValue(v);
             if (isValidValue(node)) {
+                // Only return if further recursion results in a solution, otherwise try next
+                // value
                 if (solveHelper(nextBlankNode(id))) {
                     return true;
                 }
             }
         }
 
+        // Revert Node to unsolved state if no values tried were valid
         nodes.get(id).setValue(0);
         return false;
     }
 
+    /**
+     * Find id of next unsolved Node
+     */
     private int nextBlankNode(int id) {
         while (id < nodes.size() && nodes.get(id).getValue() != 0) {
             id++;
@@ -169,11 +186,12 @@ public class Sudoku {
 
     /**
      * 
-     * @param rowNum
-     * @param line
-     * @throws InvalidPuzzleException
+     * @param rowNum number of row currently being verified
+     * @param line   contents of row currently being verified
+     * @throws InvalidPuzzleException if input puzzle does not fit Sudoku dimensions
+     *                                or includes invalid characters
      */
-    private void verifyPuzzle(int rowNum, String line) throws InvalidPuzzleException {
+    private void verifyPuzzle(int rowNum, String line) {
         if (rowNum >= 9) {
             throw new InvalidPuzzleException("Invalid column length: " + rowNum);
         }
@@ -182,6 +200,7 @@ public class Sudoku {
             throw new InvalidPuzzleException("Invalid row length: " + line.length());
         }
 
+        // Match rows against any number of 'X's and numbers only
         Pattern p = Pattern.compile("^[xX\\d]{9}$");
         Matcher m = p.matcher(line);
         if (!m.matches()) {
@@ -198,6 +217,7 @@ public class Sudoku {
      *             input file.
      */
     private void buildGraph(char[][] grid) {
+        logger.debug("Entering buildGraph");
 
         // Create nodes for each value in the grid, storing in a HashMap as they cannot
         // be
@@ -281,6 +301,7 @@ public class Sudoku {
                 }
             }
         }
+        logger.debug("Leaving buildGraph");
     }
 
 }

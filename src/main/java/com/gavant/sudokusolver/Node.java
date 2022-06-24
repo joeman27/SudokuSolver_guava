@@ -8,7 +8,8 @@ public final class Node {
 
     /**
      * Node constructor specifying only the required ID field. Should only
-     *  be used for blank Sudoku cells.
+     * be used for blank Sudoku cells.
+     * 
      * @param i unique id to assign to Node; 0 <= i <= 81
      */
     public Node(int i) {
@@ -17,7 +18,8 @@ public final class Node {
 
     /**
      * Node constructor specifying both the required ID field as well as
-     *  Sudoku cell value.
+     * Sudoku cell value.
+     * 
      * @param i unique id to assign to Node; 0 <= i <= 81
      * @param v value to store within Node; 1 <= v <= 9
      */
@@ -32,7 +34,7 @@ public final class Node {
     public int getId() {
         return this.id;
     }
-    
+
     /**
      * @return current value stored by Node; 0 if unset/unsolved
      */
@@ -49,12 +51,11 @@ public final class Node {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof Node){
+        if (other instanceof Node) {
             Node node = (Node) other;
             return this.getId() == node.getId()
-                && this.getValue() == node.getValue();
-        }
-        else {
+                    && this.getValue() == node.getValue();
+        } else {
             return false;
         }
     }
