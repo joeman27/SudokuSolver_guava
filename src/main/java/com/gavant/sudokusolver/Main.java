@@ -19,6 +19,7 @@ public final class Main {
             Path path = Paths.get("src/main/resources/" + fileName);
             Sudoku puzzle = new Sudoku();
             puzzle.readFile(path);
+            puzzle.solve();
         }
     }
 }

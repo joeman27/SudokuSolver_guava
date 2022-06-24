@@ -21,6 +21,7 @@ import com.google.common.graph.MutableGraph;
  */
 public class Sudoku {
     private MutableGraph<Node> puzzle;
+    Map<Integer, Node> nodes;
 
     private static Logger logger = LoggerFactory.getLogger(Sudoku.class.getName());
 
@@ -96,7 +97,42 @@ public class Sudoku {
      * 
      */
     public void solve() {
-        
+        // Find first blank Node
+        solveHelper(nextBlankNode(0));
+    }
+
+    private boolean solveHelper(int id) {
+        if (id >= nodes.size()) {
+            return true;
+        }
+        for (int v = 1; v <= 9; v++) {
+            Node node = nodes.get(id);
+            node.setValue(v);
+            if (isValidValue(node)) {
+                if (solveHelper(nextBlankNode(id))) {
+                    return true;
+                }
+            }
+        }
+
+        nodes.get(id).setValue(0);
+        return false;
+    }
+
+    private int nextBlankNode(int id) {
+        while (id < nodes.size() && nodes.get(id).getValue() != 0){
+            id++;
+        }
+        return id;
+    }
+
+    private boolean isValidValue(Node node) {
+        for (Node neighbor : puzzle.adjacentNodes(node)) {
+            if (neighbor.getValue() == node.getValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -131,14 +167,14 @@ public class Sudoku {
 
         // Create nodes for each value in the grid, storing in a HashMap as they cannot be
         //  getted from the graph later.
-        Map<Integer, Node> nodes = new HashMap<Integer, Node>();
+        nodes = new HashMap<Integer, Node>();
         int id = 0;
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
 
                 Node node;
                 if (grid[row][col] != 'X') {
-                    node = new Node(id, grid[row][col]);
+                    node = new Node(id, Integer.valueOf(String.valueOf(grid[row][col])));
                 }
                 else {
                     node = new Node(id);
