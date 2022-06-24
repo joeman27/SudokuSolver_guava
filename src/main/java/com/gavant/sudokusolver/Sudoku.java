@@ -18,7 +18,8 @@ import com.google.common.graph.ImmutableGraph;
 import com.google.common.graph.MutableGraph;
 
 /**
- * 
+ * Used to read, represent, solve, and output Sudoku puzzles.
+ * @author Joe Mankovecky
  */
 public class Sudoku {
     private MutableGraph<Node> puzzle;
