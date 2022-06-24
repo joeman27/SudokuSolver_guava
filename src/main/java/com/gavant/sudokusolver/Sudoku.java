@@ -1,6 +1,7 @@
 package com.gavant.sudokusolver;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,17 +41,44 @@ public class Sudoku {
      * 
      * @param fileName
      */
-    public void produceFile(String fileName) {
+    public void produceFile(Path path) {
+        try {
+            BufferedWriter f = Files.newBufferedWriter(path);
+
+            int i = 0;
+            StringBuilder line = new StringBuilder();
+            for (Node node : getGraph().nodes()) {
+                if (i % 9 == 0) {
+                    line.append("\n");
+                    f.write(line.toString());
+                    line.setLength(0);
+                }
+                line.append(node.toString() + " ");
+                i++;
+            }
+            line.append("\n");
+            f.write(line.toString());
+
+            f.close();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            logger.debug(e.getStackTrace().toString());
+        } finally {
+
+        }
 
     }
 
     /**
-     * Reads Sudoku input file, converting it to a char array to be passed to buildGraph()
+     * Reads Sudoku input file, converting it to a char array to be passed to
+     * buildGraph()
+     * 
      * @param path Relative path to Sudoku input file.
      */
     public void readFile(Path path) {
         logger.debug("Entering readFile");
-        try{
+        try {
             BufferedReader f = Files.newBufferedReader(path);
 
             // Intermediary storage between puzzle as a file and as a graph
@@ -75,7 +103,7 @@ public class Sudoku {
 
             f.close();
             buildGraph(grid);
-        }
+        } 
         catch (IOException e) {
             logger.error(e.getMessage());
             logger.debug(e.getStackTrace().toString());
@@ -84,9 +112,9 @@ public class Sudoku {
             throw e;
         }
         // catch (InvalidPuzzleException e) {
-        //     logger.error(e.getMessage());
-        //     logger.debug(e.getStackTrace().toString());
-        //     System.exit(1);
+        // logger.error(e.getMessage());
+        // logger.debug(e.getStackTrace().toString());
+        // System.exit(1);
         // }
         finally {
             logger.debug("Leaving readFile");
@@ -98,7 +126,11 @@ public class Sudoku {
      */
     public void solve() {
         // Find first blank Node
-        solveHelper(nextBlankNode(0));
+        if (solveHelper(nextBlankNode(0))) {
+            System.out.println("Solution found");
+        } else {
+            throw new InvalidPuzzleException("Puzzle not solveable");
+        }
     }
 
     private boolean solveHelper(int id) {
@@ -120,7 +152,7 @@ public class Sudoku {
     }
 
     private int nextBlankNode(int id) {
-        while (id < nodes.size() && nodes.get(id).getValue() != 0){
+        while (id < nodes.size() && nodes.get(id).getValue() != 0) {
             id++;
         }
         return id;
@@ -142,7 +174,6 @@ public class Sudoku {
      * @throws InvalidPuzzleException
      */
     private void verifyPuzzle(int rowNum, String line) throws InvalidPuzzleException {
-        //TODO: short puzzles not handled!
         if (rowNum >= 9) {
             throw new InvalidPuzzleException("Invalid column length: " + rowNum);
         }
@@ -160,13 +191,17 @@ public class Sudoku {
     }
 
     /**
-     * Constructs graph of Sudoku cells, connecting those that share rows, columns, or 3x3 blocks.
-     * @param grid Two-dimensional char array storing the contents of the Sudoku input file.
+     * Constructs graph of Sudoku cells, connecting those that share rows, columns,
+     * or 3x3 blocks.
+     * 
+     * @param grid Two-dimensional char array storing the contents of the Sudoku
+     *             input file.
      */
     private void buildGraph(char[][] grid) {
 
-        // Create nodes for each value in the grid, storing in a HashMap as they cannot be
-        //  getted from the graph later.
+        // Create nodes for each value in the grid, storing in a HashMap as they cannot
+        // be
+        // getted from the graph later.
         nodes = new HashMap<Integer, Node>();
         int id = 0;
         for (int row = 0; row < grid.length; row++) {
@@ -175,8 +210,7 @@ public class Sudoku {
                 Node node;
                 if (grid[row][col] != 'X') {
                     node = new Node(id, Integer.valueOf(String.valueOf(grid[row][col])));
-                }
-                else {
+                } else {
                     node = new Node(id);
                 }
 
@@ -194,14 +228,14 @@ public class Sudoku {
             for (int col = 0; col < grid[0].length - 1; col++) {
                 id = row * 9 + col;
 
-                // ...connect the element at that row and column to all nodes in subsequent columns of the same row.
+                // ...connect the element at that row and column to all nodes in subsequent
+                // columns of the same row.
                 for (int otherCol = col + 1; otherCol < grid[0].length; otherCol++) {
                     int otherId = row * 9 + otherCol;
                     this.puzzle.putEdge(nodes.get(id), nodes.get(otherId));
                 }
             }
         }
-        
 
         // CONNECT COLUMNS
         // For each column...
@@ -211,7 +245,8 @@ public class Sudoku {
             for (int row = 0; row < grid.length - 1; row++) {
                 id = row * 9 + col;
 
-                // ...connect the element at that column and row to all nodes in subsequent rows of the same column.
+                // ...connect the element at that column and row to all nodes in subsequent rows
+                // of the same column.
                 for (int otherRow = row + 1; otherRow < grid.length; otherRow++) {
                     int otherId = otherRow * 9 + col;
                     this.puzzle.putEdge(nodes.get(id), nodes.get(otherId));
@@ -222,9 +257,9 @@ public class Sudoku {
         // CONNECT BLOCKS
         // Iterate through 3x3 blocks of the puzzle.
         // upperBound/leftBound define the upper/left sides of the block,
-        //  lower/right sides are calculated as +3.
-        for (int upperBound = 0; upperBound < grid.length; upperBound+=3) {
-            for (int leftBound = 0; leftBound < grid[0].length; leftBound+=3) {
+        // lower/right sides are calculated as +3.
+        for (int upperBound = 0; upperBound < grid.length; upperBound += 3) {
+            for (int leftBound = 0; leftBound < grid[0].length; leftBound += 3) {
 
                 // Iterate through elements of the 3x3 block...
                 for (int row = upperBound; row < upperBound + 3; row++) {
