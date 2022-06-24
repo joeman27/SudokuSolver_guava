@@ -1,24 +1,20 @@
 package com.gavant.sudokusolver;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.gavant.sudokusolver.SudokuSolver;
 
 /**
  * Hello world!
  */
 public final class Main {
     /**
-     * Entry point for SudokuSolver.
+     * Says hello to the world.
      * @param args The arguments of the program.
      */
     public static void main(String[] args) {
-        File inputLocation = new File("src/main/resources/");
-
-        for (String fileName : inputLocation.list()) {
-            Path path = Paths.get("src/main/resources/" + fileName);
-            Sudoku puzzle = new Sudoku();
-            puzzle.readFile(path);
-        }
+        System.out.println("Hello World!");
     }
+
+    private static void readFile(){}
+
+    private static void verifyPuzzle(){}
 }
